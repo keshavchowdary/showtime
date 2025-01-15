@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.showtime.showtime.entities.User;
+import com.showtime.showtime.models.User;
 
 @Service
 public class UserService {

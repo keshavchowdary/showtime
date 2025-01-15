@@ -25,7 +25,7 @@ public class ResponseHandler {
         message = message == null ? "Success" : message;
         statusCode = statusCode == 0 ? HttpStatus.FORBIDDEN.value() : statusCode;
         ApiResponse apiResponse = new ApiResponse(
-            error,
+            error.getMessage(),
             message,
             statusCode
         );

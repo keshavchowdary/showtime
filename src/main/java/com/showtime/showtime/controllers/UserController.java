@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.showtime.showtime.constants.UserConstants;
-import com.showtime.showtime.entities.User;
+import com.showtime.showtime.models.User;
 import com.showtime.showtime.services.UserService;
 import com.showtime.showtime.utils.ApiResponse;
 import com.showtime.showtime.utils.ResponseHandler;
