@@ -3,6 +3,7 @@ package com.showtime.showtime.controllers;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,8 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.showtime.showtime.constants.LoginConstants;
 import com.showtime.showtime.entities.requestEntities.UserLogin;
 import com.showtime.showtime.entities.requestEntities.UserRegistration;
-import com.showtime.showtime.services.JWTService;
 import com.showtime.showtime.services.LoginService;
+import com.showtime.showtime.services.UserService;
 import com.showtime.showtime.utils.ApiResponse;
 import com.showtime.showtime.utils.ResponseHandler;
 
@@ -26,14 +27,15 @@ public class LoginController {
     @Autowired
     private ResponseHandler responseHandler;
     @Autowired
-    private JWTService jwtService;
-    @Autowired
     private LoginService loginService;
+    @Autowired
+    private UserService userService;
 
     @GetMapping("/health")
     public ResponseEntity<ApiResponse> healthCheck() {
+        ObjectId userId = userService.getUserId();
         return responseHandler.successResponse(
-            null,
+            userId,
             "Health check successful",
             200
         );
@@ -42,9 +44,7 @@ public class LoginController {
     @PostMapping("/login")
     public ResponseEntity<ApiResponse> userLogin(@RequestBody UserLogin userLogin) {
         try {
-            Map<String, Object> claims = new HashMap<>();
-            claims.put("email", userLogin.getEmail());
-            String token = jwtService.createToken(claims, userLogin.getEmail());
+            String token = loginService.userLogin(userLogin);
             Map<String,Object> data = new HashMap<>();
             data.put("token", token);
             return responseHandler.successResponse(
@@ -64,7 +64,6 @@ public class LoginController {
     @PostMapping("/register")
     public ResponseEntity<ApiResponse> userRegistration(@Valid @RequestBody UserRegistration userRegistration) {
         try {
-            System.out.println(userRegistration);
             Map<String, Object> data = new HashMap<>();
             loginService.registerUser(userRegistration);
             return responseHandler.successResponse(

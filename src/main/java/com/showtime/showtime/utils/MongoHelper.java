@@ -24,4 +24,8 @@ public class MongoHelper {
         mongoTemplate.save(document);
     }
 
+    public <T> Integer count(Query query, Class<T> model) {
+        return (int) mongoTemplate.count(query, model);
+    }
+
 }

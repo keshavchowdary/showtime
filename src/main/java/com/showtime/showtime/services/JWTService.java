@@ -25,7 +25,7 @@ public class JWTService {
                     .claims(claims)
                     .subject(subject)
                     .issuedAt(new Date(System.currentTimeMillis()))
-                    .expiration(new Date(System.currentTimeMillis() + 10000000))
+                    .expiration(new Date(System.currentTimeMillis() + 8_64_00_00_000L))
                     .signWith(getSecretKey())
                     .compact();
 
@@ -38,12 +38,13 @@ public class JWTService {
 
     public Object extractClaim(String token, String field) {
         Map<String,Object> claims = extractAllClaims(token);
-        System.out.println(claims);
         return claims.get(field);
     }
 
     public boolean isValidToken(String token) {
-        Date expiration = (Date) extractClaim(token, "exp");
-        return expiration != null && expiration.after(new Date());
+        Long expiryInSec = (Long) extractClaim(token, "exp");
+        Date expiration = new Date(expiryInSec * 1000);
+        boolean isTokenValid = expiration != null && expiration.after(new Date());
+        return isTokenValid;
     }
 }

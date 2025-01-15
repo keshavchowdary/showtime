@@ -2,12 +2,14 @@ package com.showtime.showtime.config.filters;
 
 import java.io.IOException;
 
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import com.showtime.showtime.entities.UserAuthData;
 import com.showtime.showtime.services.JWTService;
 
 import jakarta.servlet.FilterChain;
@@ -34,9 +36,12 @@ public class JwtFilter extends OncePerRequestFilter {
             if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
                 String token = bearerToken.substring(7);
                 String email = (String) jwtService.extractClaim(token, "email");
+                ObjectId userId = new ObjectId((String)jwtService.extractClaim(token, "userId"));
+                String name = (String) jwtService.extractClaim(token, "name");
+                UserAuthData userAuthData = new UserAuthData(email, name, userId);
                 boolean authenticationExists = SecurityContextHolder.getContext().getAuthentication() != null;
-                if (email != null && !authenticationExists && jwtService.isValidToken(token)) {
-                    UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(email, null, null);
+                if (userId != null && !authenticationExists && jwtService.isValidToken(token)) {
+                    UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userAuthData, null, null);
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                 } else {
                     sendUnauthorizedResponse(response);
