@@ -22,7 +22,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http.csrf(customizer -> customizer.disable())
-                    .authorizeHttpRequests(customizer -> customizer.requestMatchers("login", "register").permitAll()
+                    .authorizeHttpRequests(customizer -> customizer.requestMatchers("login", "register", "/admin/**").permitAll()
                                                                   .anyRequest().authenticated())
                     .httpBasic(Customizer.withDefaults())
                     .sessionManagement(customizer -> customizer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
